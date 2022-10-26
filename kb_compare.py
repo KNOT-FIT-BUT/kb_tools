@@ -26,6 +26,7 @@ limitations under the License.
 # Description: Merges two Knowledge Bases together.
 
 import argparse
+import os
 import sys
 import time
 import copy
@@ -48,7 +49,8 @@ class KB(object):
         separator - multiple values separator used in a KB
         '''
 
-        self.name = KB_file_name
+        self.file_name = KB_file_name
+        self.name = os.path.basename(self.file_name)
         if KB_fields_file_name == None: 
             self.fields_file_name = KB_file_name + ".fields"
         else:
@@ -96,9 +98,9 @@ class KB(object):
             freebase_idx = None
 
         try:
-            kb_fd = open(self.name, "r")
+            kb_fd = open(self.file_name, "r")
         except IOError:
-            printErr("Cannot open file " + self.name + ".")
+            printErr("Cannot open file " + self.file_name + ".")
             sys.exit(1)
         self.entities = list()
         for line in kb_fd:
@@ -677,6 +679,7 @@ class Output(object):
                 other_output_fields += [line]
         other_output_conf_fd.close()
 
+        os.makedirs(os.path.dirname(output_file_name), exist_ok=True)
         try:
             self.output_fd = open(output_file_name, 'w')
         except IOError:
